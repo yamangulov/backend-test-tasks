@@ -1,0 +1,89 @@
+buildscript {
+    repositories {
+        maven { url "https://repo.spring.io/libs-milestone" }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE"
+        classpath "gradle.plugin.org.hidetake:gradle-swagger-generator-plugin:2.9.0"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.13"
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repo.spring.io/libs-milestone"
+    }
+}
+
+group 'com.backend.tasks'
+version '1.0-SNAPSHOT'
+
+
+apply plugin: "java"
+apply plugin: "io.spring.dependency-management"
+apply plugin: "org.springframework.boot"
+apply plugin: "idea"
+apply plugin: "org.hidetake.swagger.generator"
+apply plugin: "net.ltgt.apt"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+    springCloudVersion="Finchley.M9"
+    swaggerVersion = "2.8.0"
+    swaggerCodegenVersion = "2.3.1"
+    lombokVersion = "1.16.20"
+    mapstructVersion = "1.2.0.Final"
+    logbackClassicVersion = "1.1.8"
+    validationAPIVersion="2.0.1.Final"
+    hibernateValidatorVersion="6.0.9.Final"
+    gsonVersion="2.8.2"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework.boot:spring-boot-starter-aop")
+    compile("com.h2database:h2:1.4.196")
+
+    compile "javax.validation:validation-api:${validationAPIVersion}"
+    compile "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
+
+    compile("ch.qos.logback:logback-classic:${logbackClassicVersion}")
+    compile("ch.qos.logback:logback-core:${logbackClassicVersion}")
+
+    compile("io.springfox:springfox-swagger2:${swaggerVersion}")
+    compile("io.springfox:springfox-swagger-ui:${swaggerVersion}")
+    compile("io.swagger:swagger-codegen-cli:${swaggerCodegenVersion}")
+    swaggerCodegen("io.swagger:swagger-codegen-cli:${swaggerCodegenVersion}")
+
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    apt("org.projectlombok:lombok:${lombokVersion}")
+
+    compile("org.mapstruct:mapstruct-jdk8:${mapstructVersion}")
+    compile("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+    apt "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    compile("com.google.code.gson:gson:${gsonVersion}")
+    
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompileOnly 'junit:junit:4.+'
+}
+
+
+jar {
+    baseName = "broker-backend"
+    version = "0.1"
+}
